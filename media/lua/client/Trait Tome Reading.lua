@@ -24,20 +24,30 @@ function ReadTraitTome:start()
 end
 
 
+function ReadTraitTome:forceStop()
+	self.character:setReading(false)
+	self.item:setJobDelta(0.0)
+	if self.action then self.action:setLoopedAction(false) end
+	self.character:playSound("CloseBook")
+	ISBaseTimedAction.forceStop(self)
+end
+
+
+function ReadTraitTome:stop()
+	self.character:setReading(false)
+	self.character:playSound("CloseBook")
+	ISBaseTimedAction.stop(self)
+end
 
 function ReadTraitTome:perform()
 	self.character:setReading(false)
 	self.item:getContainer():setDrawDirty(true)
-	local logText = ISLogSystem.getGenericLogText(self.character)
 	local playerTraits = self.character:getTraits()
-
-
 	local hasOrganized = self.character:HasTrait("Organized")
-
-
 	if hasOrganized == false then
 		playerTraits:add("Organized")
 	end
+	self.character:playSound("CloseBook")
 	ISBaseTimedAction.perform(self)
 end
 
@@ -49,14 +59,14 @@ function ReadTraitTome:new(character, item)
 	o.item = item
 	o.stopOnWalk = false
 	o.stopOnRun = true
-	o.loopedAction = true
+	o.loopedAction = false
 	o.ignoreHandsWounds = true
 	o.caloriesModifier = 0.5
-	o.readTimer = -30
+	o.readTimer = 30
 	o.forceProgressBar = true
 	o.learnedRecipes = {}
 	o.recipeIntervals = 0
-	o.maxTime = 10
+	o.maxTime = 30
 	o.haloTextDelay = 0
 
 	return o
