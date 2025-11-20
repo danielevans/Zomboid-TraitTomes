@@ -1,0 +1,5 @@
+name=Trait Tomes
+id=TraitTomes
+description=Tomes and Scrolls to grant dynamic traits to players. Designed to bind to specific players to prevent re-use.
+description=
+versionMin=41.66
