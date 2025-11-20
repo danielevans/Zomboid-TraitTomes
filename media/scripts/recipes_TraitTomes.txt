@@ -1,0 +1,24 @@
+module TraitTomes
+{
+    recipe Add Organized to Trait Tome
+    {
+        keep TraitTomes.TraitTome,
+        destroy Base.RippedSheets=10,
+        Result:Base.RippedSheets=10,
+        Category:TraitTomes,
+        Time:10,
+        OnCreate:AddOrganizedToTraitTome,
+        OnTest:CanAddOrganizedToTraitTome
+    }
+
+    recipe Add Remove Disorganized to Trait Tome
+    {
+        keep TraitTomes.TraitTome,
+        destroy Base.RippedSheets=10,
+        Result:Base.RippedSheets=10,
+        Category:TraitTomes,
+        Time:10,
+        OnCreate:AddRemoveDisorganizedToTraitTome,
+        OnTest:CanAddRemoveDisorganizedToTraitTome
+    }
+}

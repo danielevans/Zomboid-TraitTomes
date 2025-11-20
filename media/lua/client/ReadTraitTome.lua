@@ -39,14 +39,38 @@ function ReadTraitTome:stop()
 	ISBaseTimedAction.stop(self)
 end
 
+function executeTraitDelta(character, operation)
+    local trait = operation.trait
+    local op = operation.op
+	local hasTrait = character:HasTrait(trait)
+	local playerTraits = character:getTraits()
+	if hasTrait and op == "-" then
+		playerTraits:remove(trait)
+	elseif not hastrait and op == "+" then
+		playerTraits:add(trait)
+	end
+end
+
 function ReadTraitTome:perform()
+	local tomeModData = self.item:getModData()
+	local steamId = self.character:getSteamID()
+	local username = self.character:getUsername()
+
+	if not tomeModData.steamId then
+		tomeModData.steamId = steamId
+	end
+
+	if not tomeModData.username then
+		tomeModData.username = username
+	end
+
 	self.character:setReading(false)
 	self.item:getContainer():setDrawDirty(true)
-	local playerTraits = self.character:getTraits()
-	local hasOrganized = self.character:HasTrait("Organized")
-	if hasOrganized == false then
-		playerTraits:add("Organized")
+
+	for _i,delta in ipairs(tomeModData.traitDeltas) do
+		executeTraitDelta(self.character, delta)
 	end
+
 	self.character:playSound("CloseBook")
 	ISBaseTimedAction.perform(self)
 end

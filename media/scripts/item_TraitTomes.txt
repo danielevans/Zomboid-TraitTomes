@@ -1,10 +1,10 @@
-module Base
+module TraitTomes
 {
-    item TraitTomesScrollOrganized
+    item TraitTome
     {
-        Weight	=	0.8,
+        Weight	=	0.1,
         Type	=	Normal,
-        DisplayName = Scroll of Organized,
+        DisplayName = Tome of Power,
         DisplayCategory = Trait Tomes,
         DisappearOnUse = TRUE,
     }
