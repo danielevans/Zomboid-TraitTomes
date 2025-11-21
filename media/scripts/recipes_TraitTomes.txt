@@ -3,7 +3,7 @@ module TraitTomes
     recipe Add Organized to Trait Tome
     {
         keep TraitTomes.TraitTome,
-        destroy Base.RippedSheets=10,
+        Base.RippedSheets=10,
         Result:Base.RippedSheets=10,
         Category:TraitTomes,
         Time:10,

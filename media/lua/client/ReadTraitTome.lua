@@ -44,9 +44,9 @@ function executeTraitDelta(character, operation)
     local op = operation.op
 	local hasTrait = character:HasTrait(trait)
 	local playerTraits = character:getTraits()
-	if hasTrait and op == "-" then
+	if op == "-" and hasTrait then
 		playerTraits:remove(trait)
-	elseif not hastrait and op == "+" then
+	elseif op == "+" and (not hasTrait) then
 		playerTraits:add(trait)
 	end
 end

@@ -10,6 +10,7 @@ function InsertTraitOp(items, operation)
 end
 
 function CanInsertTraitOp(item, operation)
+
   if item:getType() == "TraitTome" then
     local modData = item:getModData()
     if not modData.traitDeltas then
