@@ -45,9 +45,32 @@ function executeTraitDelta(character, operation)
 	local hasTrait = character:HasTrait(trait)
 	local playerTraits = character:getTraits()
 	if op == "-" and hasTrait then
+		print("[TraitTomes] Removing Trait From Player: " .. trait)
 		playerTraits:remove(trait)
 	elseif op == "+" and (not hasTrait) then
-		playerTraits:add(trait)
+
+		local traitList = TraitFactory:getTraits()
+		local exclusiveTraitFound = nil
+        for k=0,traitList:size()-1 do
+			local factoryTrait = traitList:get(k)
+			local exclusiveTraits = factoryTrait:getMutuallyExclusiveTraits()
+			if factoryTrait:getType() == trait and exclusiveTraits and exclusiveTraits:size() > 0 then
+				for i=0,playerTraits:size()-1 do
+					for j=0,exclusiveTraits:size()-1 do
+						if playerTraits:get(i) == exclusiveTraits:get(j) then
+							exclusiveTraitFound = playerTraits:get(i)
+						end
+					end
+				end
+			end
+		end
+
+		if exclusiveTraitFound then
+			print("[TraitTomes] Failed to Add Trait To Player: " .. trait .. " Player has mutually exclusive trait " .. exclusiveTraitFound)
+		else
+			print("[TraitTomes] Adding Trait To Player: " .. trait)
+			playerTraits:add(trait)
+		end
 	end
 end
 
@@ -67,11 +90,20 @@ function ReadTraitTome:perform()
 	self.character:setReading(false)
 	self.item:getContainer():setDrawDirty(true)
 
-	for _i,delta in ipairs(tomeModData.traitDeltas) do
-		executeTraitDelta(self.character, delta)
+	for _,delta in pairs(tomeModData.traitDeltas) do
+		if delta.op == "-" then
+		  executeTraitDelta(self.character, delta)
+		end
+	end
+
+	for _,delta in pairs(tomeModData.traitDeltas) do
+		if delta.op == "+" then
+			executeTraitDelta(self.character, delta)
+		end
 	end
 
 	self.character:playSound("CloseBook")
+	self.character:playSound("LevelUp")
 	ISBaseTimedAction.perform(self)
 end
 

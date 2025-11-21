@@ -52,25 +52,22 @@ function ISToolTipInv:render()
 
 
         local traitDeltas = traitTomeModData.traitDeltas
+        text = text .. "Traits Added:\n"
         if traitDeltas then
-            text = text .. dump(traitDeltas) .. "\n"
+            for _,delta in pairs(traitDeltas) do
+              text = text .. "  " .. delta.op .. delta.label .. "\n"
+            end
         end
 
         local mx = getMouseX() + 24;
         local my = getMouseY() + 24;
-        self.tooltip:setX(mx+11);
+
+        self.item:setTooltip(text)
+
+        self.tooltip:setX(mx);
         self.tooltip:setY(my);
-        self.tooltip:setWidth(50)
-        self.tooltip:setMeasureOnly(true)
+
         self.item:DoTooltip(self.tooltip)
-        self.tooltip:setMeasureOnly(false)
-
-        self:drawRect(0, 0, self.width, self.height, self.backgroundColor.a, self.backgroundColor.r, self.backgroundColor.g, self.backgroundColor.b);
-        self:drawRectBorder(0, 0, self.width, self.height, self.borderColor.a, self.borderColor.r, self.borderColor.g, self.borderColor.b);
-        self.tooltip:DrawText(self.tooltip:getFont(), text, 5, 24, 1, 0.4, 0, 1);
-
-
-
 	end
 end
 
