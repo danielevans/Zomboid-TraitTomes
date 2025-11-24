@@ -62,7 +62,7 @@ function contextTT.doContextMenu(playerID, context, items)
 				end
 
 				table.sort(traitOptions, function(l,r)
-					return l:getCost() > r:getCost()
+					return l:getCost() < r:getCost()
 				end)
 
 				for j,trait in pairs(traitOptions) do

@@ -13,27 +13,28 @@ function ISToolTipInv:render()
         local traitTomeModData = itemObj:getModData()
         local text = ""
 
-        if itemType == "TraitTome" then
-            if traitTomeModData.steamId == getSteamIDFromUsername(getOnlineUsername()) then
-                text = text .. "Tethered to You"
-            elseif traitTomeModData.steamId then
-                text = text .. "Tethered to Another"
-            else
-                text = text .. "Untethered to a Soul"
-            end
-            text = text .. "\n"
-        end
-
         -- text = text .. "Player Access Level: " .. player:getAccessLevel() .. "\n"
         if getAccessLevel() == "admin" then
             if traitTomeModData.username then
                 text = text .. "Bound to: " .. tostring(traitTomeModData.username) .. " (" .. tostring(traitTomeModData.steamId) .. ")\n"
             end
+        else
+            if itemType == "TraitTome" then
+                if traitTomeModData.steamId == getSteamIDFromUsername(getOnlineUsername()) then
+                    text = text .. "Tethered to You"
+                elseif traitTomeModData.steamId then
+                    text = text .. "Tethered to Another"
+                else
+                    text = text .. "Untethered to a Soul"
+                end
+                text = text .. "\n"
+            end
         end
 
         local traitDeltas = traitTomeModData.traitDeltas
-        text = text .. "Trait: "
+
         if traitDeltas then
+            text = text .. "Trait: "
             for _,delta in pairs(traitDeltas) do
               text = text .. "  " .. delta.label
             end
