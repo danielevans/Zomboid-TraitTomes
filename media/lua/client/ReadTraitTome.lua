@@ -155,6 +155,11 @@ end
 
 function ReadTraitTome:new(character, item)
 	local o = {}
+	local itemType = item:getType()
+	local maxTime = 600
+	if itemType == "TraitScroll" then
+		maxTime = 350
+	end
 	setmetatable(o, self)
 	self.__index = self
 	o.character = character
@@ -164,10 +169,10 @@ function ReadTraitTome:new(character, item)
 	o.loopedAction = false
 	o.ignoreHandsWounds = true
 	o.caloriesModifier = 0.5
-	o.readTimer = 900
+	o.readTimer = maxTime
 	o.forceProgressBar = true
 	o.recipeIntervals = 0
-	o.maxTime = 900
+	o.maxTime = maxTime
 	o.haloTextDelay = 0
 
 	return o
