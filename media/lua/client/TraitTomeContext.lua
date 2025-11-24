@@ -52,14 +52,24 @@ function contextTT.doContextMenu(playerID, context, items)
 				local option = context:addOption("Add Traits to Tome", actualItems, contextTT.readItems, player)
 				local subMenu = ISContextMenu:getNew(context)
 
+				local traitOptions = {}
+
 				for i=0,TraitFactory:getTraits():size()-1 do
 					local trait = TraitFactory:getTraits():get(i)
 					if trait:getCost() > 0 then
-						local operation = traitOperation(trait)
-
-						local text = trait:getCost() .. "pts: " .. operation.op .. operation.label
-						local subOption = subMenu:addOption(text, item, contextTT.InsertTraitOp, operation, player)
+						table.insert(traitOptions, trait)
 					end
+				end
+
+				table.sort(traitOptions, function(l,r)
+					return l:getCost() > r:getCost()
+				end)
+
+				for j,trait in pairs(traitOptions) do
+					local operation = traitOperation(trait)
+
+					local text = trait:getCost() .. "pts: " .. operation.label
+					local subOption = subMenu:addOption(text, item, contextTT.InsertTraitOp, operation, player)
 				end
 
 			    context:addSubMenu(option, subMenu)

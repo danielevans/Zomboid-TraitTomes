@@ -27,16 +27,17 @@ function ISToolTipInv:render()
         -- text = text .. "Player Access Level: " .. player:getAccessLevel() .. "\n"
         if getAccessLevel() == "admin" then
             if traitTomeModData.username then
-                text = text .. "Bound to Steam Account of: " .. tostring(traitTomeModData.username) .. " (" .. tostring(traitTomeModData.steamId) .. ")\n"
+                text = text .. "Bound to: " .. tostring(traitTomeModData.username) .. " (" .. tostring(traitTomeModData.steamId) .. ")\n"
             end
         end
 
         local traitDeltas = traitTomeModData.traitDeltas
-        text = text .. "Traits Added:\n"
+        text = text .. "Trait: "
         if traitDeltas then
             for _,delta in pairs(traitDeltas) do
-              text = text .. "  " .. delta.op .. delta.label .. "\n"
+              text = text .. "  " .. delta.op .. delta.label
             end
+            text = text .. "\n"
         end
 
         local mx = getMouseX() + 24;
