@@ -45,7 +45,7 @@ function ReadTraitTome:stop()
 	ISBaseTimedAction.stop(self)
 end
 
-function adjustExperienceForTrait(character, trait)
+local function adjustExperienceForTrait(character, trait)
    local levels = nil
    for k,leveling in pairs(traitLevelMap) do
 	   if trait == k then
@@ -79,7 +79,7 @@ function adjustExperienceForTrait(character, trait)
    end
 end
 
-function executeTraitDelta(character, operation)
+local function executeTraitDelta(character, operation)
     local trait = operation.trait
     local op = operation.op
 	local hasTrait = character:HasTrait(trait)
