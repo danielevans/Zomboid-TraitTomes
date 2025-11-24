@@ -159,7 +159,6 @@ function ReadTraitTome:new(character, item)
 	o.caloriesModifier = 0.5
 	o.readTimer = 30
 	o.forceProgressBar = true
-	o.learnedRecipes = {}
 	o.recipeIntervals = 0
 	o.maxTime = 30
 	o.haloTextDelay = 0

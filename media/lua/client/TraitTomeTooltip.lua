@@ -13,7 +13,7 @@ function ISToolTipInv:render()
         local traitTomeModData = itemObj:getModData()
         local text = ""
 
-        if temType == "TraitScroll" then
+        if itemtype == "TraitTome" then
             if traitTomeModData.steamId == getSteamIDFromUsername(getOnlineUsername()) then
                 text = text .. "Tethered to You"
             elseif traitTomeModData.steamId then
