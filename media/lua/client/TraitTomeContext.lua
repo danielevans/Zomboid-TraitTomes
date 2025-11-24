@@ -15,30 +15,7 @@ function contextTT.readItems(items, player)
 	end
 end
 
-
-function traitRefusedReason(item, trait, operation)
-  local t = trait:getType()
-  local modData = item:getModData()
-  local exclusiveTraits = trait:getMutuallyExclusiveTraits()
-  if modData and modData.traitDeltas then
-	  for i,delta in pairs(modData.traitDeltas) do
-		  if delta.trait == t then
-			  return "Already Added"
-		  end
-		  if operation.op == "+" then
-			for j=0,exclusiveTraits:size()-1 do
-				local exclusiveTrait = exclusiveTraits:get(j)
-				if delta.trait == exclusiveTrait and delta.op == "+" then
-				return "Mutually Exlclusive with " .. exclusiveTrait
-				end
-			end
-		  end
-	  end
-  end
-  return nil
-end
-
-function traitOperation(trait)
+local function traitOperation(trait)
   local op = "+"
   if trait:getCost() < 0 then
 	  op = "-"
@@ -46,11 +23,17 @@ function traitOperation(trait)
   return { op=op, trait=trait:getType(), label=trait:getLabel() }
 end
 
-function contextTT.InsertTraitOp(item, operation)
-    print("testing")
+function contextTT.InsertTraitOp(item, operation, player)
 	local modData = item:getModData()
 	modData.traitDeltas = modData.traitDeltas or {}
 	table.insert(modData.traitDeltas, operation)
+
+	item:setName(item:getName() .. " - " .. operation.label)
+	local pdata = getPlayerData(player:getPlayerNum())
+	if pdata then
+		pdata.playerInventory:refreshBackpacks()
+		pdata.lootInventory:refreshBackpacks()
+	end
 end
 
 ---@param context ISContextMenu
@@ -59,28 +42,20 @@ function contextTT.doContextMenu(playerID, context, items)
 	local player = getSpecificPlayer(playerID)
 
 	for i,item in ipairs(actualItems) do
-		if item:getType() == "TraitTome" then
-			if player:getAccessLevel() == "admin" or getDebugOptions then
+		local itemType = item:getType()
+		if (itemType == "TraitTome") or (itemType == "TraitScroll") then
+			local traitDeltas = item:getModData().traitDeltas
+			if player:getAccessLevel() == "admin" or getDebugOptions and (not item:getModData().traitDeltas) then
 				local option = context:addOption("Add Traits to Tome", actualItems, contextTT.readItems, player)
 				local subMenu = ISContextMenu:getNew(context)
 
-				subMenu:addOptionOnTop("Add Traits to Tome 1", actualItems, contextTT.readItems, player)
-				subMenu:addOptionOnTop("Add Traits to Tome 2", actualItems, contextTT.readItems, player)
-
 				for i=0,TraitFactory:getTraits():size()-1 do
 					local trait = TraitFactory:getTraits():get(i)
-					local operation = traitOperation(trait)
-					local traitRefused = traitRefusedReason(item, trait, operation)
+					if trait:getCost() > 0 then
+						local operation = traitOperation(trait)
 
-					local text = operation.op .. operation.label .. "  (" .. operation.trait .. ") [".. trait:getCost() .."]"
-
-					local subOption = subMenu:addOption(text, item, contextTT.InsertTraitOp, operation)
-
-					if traitRefused then
-						subOption.notAvailable = true
-						local tooltip = ISInventoryPaneContextMenu.addToolTip()
-						tooltip.description = traitRefused
-						subOption.toolTip = tooltip
+						local text = operation.op .. operation.label .. " [Cost: ".. trait:getCost() .."pts]"
+						local subOption = subMenu:addOption(text, item, contextTT.InsertTraitOp, operation, player)
 					end
 				end
 
@@ -89,11 +64,11 @@ function contextTT.doContextMenu(playerID, context, items)
 
 			end
 
-			context:addOptionOnTop(getText("ContextMenu_Read"), actualItems, contextTT.readItems, player)
+			if traitDeltas and (not traitDeltas.steamId or getSteamIDFromUsername(getOnlineUsername()) == traitDeltas.steamId) then
+				context:addOptionOnTop(getText("ContextMenu_Read"), actualItems, contextTT.readItems, player)
+			end
 		end
 	end
 end
-
-
 
 return contextTT

@@ -5,7 +5,14 @@ module TraitTomes
         Weight	=	0.1,
         Type	=	Normal,
         DisplayName = Tome of Power,
-        DisplayCategory = Trait Tomes,
-        DisappearOnUse = TRUE,
+        DisplayCategory = Trait Tomes
+    }
+
+    item TraitScroll
+    {
+        Weight	=	0.1,
+        Type	=	Normal,
+        DisplayName = Scroll of Power,
+        DisplayCategory = Trait Tomes
     }
 }

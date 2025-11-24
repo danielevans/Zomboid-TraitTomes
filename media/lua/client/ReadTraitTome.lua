@@ -32,11 +32,43 @@ function ReadTraitTome:forceStop()
 	ISBaseTimedAction.forceStop(self)
 end
 
+local traitLevelMap = {
+	Stout={ Strength=6 },
+	Strong={ Strength=9 },
+	Fit={ Fitness=6 },
+	Athletic={ Fitness=9 },
+}
 
 function ReadTraitTome:stop()
 	self.character:setReading(false)
 	self.character:playSound("CloseBook")
 	ISBaseTimedAction.stop(self)
+end
+
+function adjustExperienceForTrait(character, trait)
+   local levels = nil
+   for k,leveling in pairs(traitLevelMap) do
+	   if trait == k then
+		   levels = leveling
+	   end
+   end
+
+   if levels then
+	   for perkName,minLevel in pairs(levels) do
+	      local perk = PerkFactory.getPerkFromName(perkName)
+		  local currentLevel = character:getPerkLevel(perk)
+	      if currentLevel < minLevel then
+			  print("[TraitTomes] Adjusting Experience for " .. perkName)
+			  local xp = character:getXp()
+			  repeat
+			    -- setting the XP directly doesn't level up properly, leveling up a bit at a time correctly levels up
+			    xp:AddXPNoMultiplier(perk, 100.0)
+			  until character:getPerkLevel(perk) >= minLevel
+			  -- strips off any "extra" XP left over from the leveling up
+			  xp:setXPToLevel(perk, minLevel)
+		  end
+	   end
+   end
 end
 
 function executeTraitDelta(character, operation)
@@ -48,6 +80,7 @@ function executeTraitDelta(character, operation)
 		print("[TraitTomes] Removing Trait From Player: " .. trait)
 		playerTraits:remove(trait)
 	elseif op == "+" and (not hasTrait) then
+		adjustExperienceForTrait(character, trait)
 
 		local traitList = TraitFactory:getTraits()
 		local exclusiveTraitFound = nil
@@ -58,53 +91,59 @@ function executeTraitDelta(character, operation)
 				for i=0,playerTraits:size()-1 do
 					for j=0,exclusiveTraits:size()-1 do
 						if playerTraits:get(i) == exclusiveTraits:get(j) then
-							exclusiveTraitFound = playerTraits:get(i)
+							local autoremovedTrait = playerTraits:get(i)
+							print("[TraitTomes] removing mutually exclusive trait: " .. autoremovedTrait)
+							playerTraits:remove(autoremovedTrait)
 						end
 					end
 				end
 			end
 		end
 
-		if exclusiveTraitFound then
-			print("[TraitTomes] Failed to Add Trait To Player: " .. trait .. " Player has mutually exclusive trait " .. exclusiveTraitFound)
-		else
-			print("[TraitTomes] Adding Trait To Player: " .. trait)
-			playerTraits:add(trait)
+		print("[TraitTomes] Adding Trait To Player: " .. trait)
+		-- Prevent double adding automatic traits, like atheletic
+		playerTraits = character:getTraits()
+		local alreadyHave = false
+		for i=0,playerTraits:size()-1 do
+			if playerTraits:get(i) == trait then
+				alreadyHave = true
+			end
+		end
+		if not alreadyHave then
+		  playerTraits:add(trait)
 		end
 	end
 end
 
 function ReadTraitTome:perform()
 	local tomeModData = self.item:getModData()
-	local steamId = self.character:getSteamID()
-	local username = self.character:getUsername()
+	local steamId = getSteamIDFromUsername(getOnlineUsername())
 
 	if not tomeModData.steamId then
 		tomeModData.steamId = steamId
 	end
 
 	if not tomeModData.username then
-		tomeModData.username = username
+		tomeModData.username = getOnlineUsername()
 	end
 
 	self.character:setReading(false)
 	self.item:getContainer():setDrawDirty(true)
 
 	for _,delta in pairs(tomeModData.traitDeltas) do
-		if delta.op == "-" then
-		  executeTraitDelta(self.character, delta)
-		end
-	end
-
-	for _,delta in pairs(tomeModData.traitDeltas) do
-		if delta.op == "+" then
-			executeTraitDelta(self.character, delta)
-		end
+		executeTraitDelta(self.character, delta)
 	end
 
 	self.character:playSound("CloseBook")
-	self.character:playSound("LevelUp")
+	self.character:playSound("GainExperienceLevel")
 	ISBaseTimedAction.perform(self)
+
+	local itemType = self.item:getType()
+	if itemType == "TraitScroll" then
+		print("[TraitTomes] Deleting Scroll")
+		local inventory = self.character:getInventory()
+		inventory:Remove(self.item)
+	end
 end
 
 function ReadTraitTome:new(character, item)
