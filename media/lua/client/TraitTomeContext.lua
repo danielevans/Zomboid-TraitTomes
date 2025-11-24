@@ -59,9 +59,7 @@ function contextTT.doContextMenu(playerID, context, items)
 					end
 				end
 
-
 			    context:addSubMenu(option, subMenu)
-
 			end
 
 			if traitDeltas and (not traitDeltas.steamId or getSteamIDFromUsername(getOnlineUsername()) == traitDeltas.steamId) then

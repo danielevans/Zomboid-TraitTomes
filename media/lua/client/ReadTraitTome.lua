@@ -58,14 +58,22 @@ function adjustExperienceForTrait(character, trait)
 	      local perk = PerkFactory.getPerkFromName(perkName)
 		  local currentLevel = character:getPerkLevel(perk)
 	      if currentLevel < minLevel then
-			  print("[TraitTomes] Adjusting Experience for " .. perkName)
 			  local xp = character:getXp()
+
 			  repeat
-			    -- setting the XP directly doesn't level up properly, leveling up a bit at a time correctly levels up
-			    xp:AddXPNoMultiplier(perk, 100.0)
+			  -- setting the XP directly doesn't level up properly, leveling up a bit at a time correctly levels up
+			  xp:AddXPNoMultiplier(perk, 100.0)
 			  until character:getPerkLevel(perk) >= minLevel
 			  -- strips off any "extra" XP left over from the leveling up
 			  xp:setXPToLevel(perk, minLevel)
+
+			 -- for i=1,minLevel-currentLevel do
+			--	print("[TraitTomes] Adjusting Experience for " .. perkName)
+			--	character:LevelPerk(perk, false);
+			--	local xp = character:getXp()
+			--	xp:setXPToLevel(perk, currentLevel+i)
+			--	SyncXp(character)
+			--  end
 		  end
 	   end
    end
@@ -117,10 +125,9 @@ end
 
 function ReadTraitTome:perform()
 	local tomeModData = self.item:getModData()
-	local steamId = getSteamIDFromUsername(getOnlineUsername())
 
 	if not tomeModData.steamId then
-		tomeModData.steamId = steamId
+		tomeModData.steamId = getSteamIDFromUsername(getOnlineUsername())
 	end
 
 	if not tomeModData.username then

@@ -2,7 +2,7 @@ require "ISUI/ISToolTipInv"
 
 local ISToolTipInv_render = ISToolTipInv.render
 function ISToolTipInv:render()
-    local itemtype = self.item:getType()
+    local itemType = self.item:getType()
     if not (itemType == "TraitTome" or itemType == "TraitScroll") then
         return ISToolTipInv_render(self)
     end
@@ -13,7 +13,7 @@ function ISToolTipInv:render()
         local traitTomeModData = itemObj:getModData()
         local text = ""
 
-        if itemtype == "TraitTome" then
+        if itemType == "TraitTome" then
             if traitTomeModData.steamId == getSteamIDFromUsername(getOnlineUsername()) then
                 text = text .. "Tethered to You"
             elseif traitTomeModData.steamId then
@@ -27,7 +27,7 @@ function ISToolTipInv:render()
         -- text = text .. "Player Access Level: " .. player:getAccessLevel() .. "\n"
         if player:getAccessLevel() == "admin" or getDebugOptions then
             if traitTomeModData.username then
-                text = text .. "Bound to Steam Account of: " .. traitTomeModData.username .. " (" .. traitTomeModData.steamId .. ")\n"
+                text = text .. "Bound to Steam Account of: " .. tostring(traitTomeModData.username) .. " (" .. tostring(traitTomeModData.steamId) .. ")\n"
             end
         end
 
