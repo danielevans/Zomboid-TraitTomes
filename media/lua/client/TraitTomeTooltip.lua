@@ -13,14 +13,16 @@ function ISToolTipInv:render()
         local traitTomeModData = itemObj:getModData()
         local text = ""
 
-        if traitTomeModData.steamId == getSteamIDFromUsername(getOnlineUsername()) then
-            text = text .. getText("TraitTomes_BoundSelf")
-        elseif traitTomeModData.steamId then
-            text = text .. getText("TraitTomes_BoundOther")
-        else
-            text = text .. getText("TraitTomes_Unbound")
+        if temType == "TraitScroll" then
+            if traitTomeModData.steamId == getSteamIDFromUsername(getOnlineUsername()) then
+                text = text .. "Tethered to You"
+            elseif traitTomeModData.steamId then
+                text = text .. "Tethered to Another"
+            else
+                text = text .. "Untethered to a Soul"
+            end
+            text = text .. "\n"
         end
-        text = text .. "\n"
 
         -- text = text .. "Player Access Level: " .. player:getAccessLevel() .. "\n"
         if player:getAccessLevel() == "admin" or getDebugOptions then

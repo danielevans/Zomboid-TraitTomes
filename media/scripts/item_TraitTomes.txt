@@ -1,18 +1,29 @@
 module TraitTomes
 {
+    imports
+    {
+        Base
+    }
+
     item TraitTome
     {
         Weight	=	0.1,
         Type	=	Normal,
         DisplayName = Tome of Power,
-        DisplayCategory = Trait Tomes
+        DisplayCategory = Trait Tomes,
+        Icon = Book,
+        StaticModel = Book,
+        WorldStaticModel = BookPurple_Ground,
     }
 
     item TraitScroll
     {
-        Weight	=	0.1,
+        Weight	=	0.01,
         Type	=	Normal,
         DisplayName = Scroll of Power,
-        DisplayCategory = Trait Tomes
+        DisplayCategory = Trait Tomes,
+        Icon = Paper,
+        StaticModel = SheetOfPaper,
+        WorldStaticModel = SheetOfPaper,
     }
 }
