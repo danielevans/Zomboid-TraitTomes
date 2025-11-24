@@ -77,7 +77,12 @@ function contextTT.doContextMenu(playerID, context, items)
 
 			if traitsPresent then
 				if (itemModData.steamId == nil) or (getSteamIDFromUsername(getOnlineUsername()) == itemModData.steamId) then
-					context:addOptionOnTop(getText("ContextMenu_Read"), actualItems, contextTT.readItems, player)
+					local text = "Read "
+					if itemModData.steamId == nil and itemType == "TraitTome" then
+						text = "Read and Tether "
+					end
+					text = text .. item:getName()
+					context:addOptionOnTop(text, actualItems, contextTT.readItems, player)
 				end
 			end
 		end
