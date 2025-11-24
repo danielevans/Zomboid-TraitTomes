@@ -164,10 +164,10 @@ function ReadTraitTome:new(character, item)
 	o.loopedAction = false
 	o.ignoreHandsWounds = true
 	o.caloriesModifier = 0.5
-	o.readTimer = 30
+	o.readTimer = 90
 	o.forceProgressBar = true
 	o.recipeIntervals = 0
-	o.maxTime = 30
+	o.maxTime = 90
 	o.haloTextDelay = 0
 
 	return o

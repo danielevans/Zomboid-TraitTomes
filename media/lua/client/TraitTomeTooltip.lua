@@ -40,6 +40,8 @@ function ISToolTipInv:render()
             text = text .. "\n"
         end
 
+        self.item:setTooltip(text)
+
         local mx = getMouseX() + 24;
         local my = getMouseY() + 24;
         if not self.followMouse then
