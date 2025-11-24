@@ -45,7 +45,7 @@ function contextTT.doContextMenu(playerID, context, items)
 		local itemType = item:getType()
 		if (itemType == "TraitTome") or (itemType == "TraitScroll") then
 			local traitDeltas = item:getModData().traitDeltas
-			if (player:getAccessLevel() ~= "admin") and (not item:getModData().traitDeltas) then
+			if (getAccessLevel() == "admin") and (not item:getModData().traitDeltas) then
 				local option = context:addOption("Add Traits to Tome", actualItems, contextTT.readItems, player)
 				local subMenu = ISContextMenu:getNew(context)
 
@@ -62,8 +62,10 @@ function contextTT.doContextMenu(playerID, context, items)
 			    context:addSubMenu(option, subMenu)
 			end
 
-			if traitDeltas and ((not traitDeltas.steamId) or (getSteamIDFromUsername(getOnlineUsername()) == traitDeltas.steamId)) then
-				context:addOptionOnTop(getText("ContextMenu_Read"), actualItems, contextTT.readItems, player)
+			if traitDeltas then
+				if (traitDeltas.steamId == nil) or (getSteamIDFromUsername(getOnlineUsername()) == traitDeltas.steamId)) then
+					context:addOptionOnTop(getText("ContextMenu_Read"), actualItems, contextTT.readItems, player)
+				end
 			end
 		end
 	end

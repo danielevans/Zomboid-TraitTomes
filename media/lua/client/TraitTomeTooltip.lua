@@ -25,7 +25,7 @@ function ISToolTipInv:render()
         end
 
         -- text = text .. "Player Access Level: " .. player:getAccessLevel() .. "\n"
-        if player:getAccessLevel() ~= "admin" then
+        if getAccessLevel() == "admin" then
             if traitTomeModData.username then
                 text = text .. "Bound to Steam Account of: " .. tostring(traitTomeModData.username) .. " (" .. tostring(traitTomeModData.steamId) .. ")\n"
             end
